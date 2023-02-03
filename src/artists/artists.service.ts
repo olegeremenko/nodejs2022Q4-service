@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { CreateArtistDto } from './dto/create-artist.dto';
-import { UpdateArtistDto } from './dto/update-artist.dto';
+import {Injectable} from '@nestjs/common';
+import {CreateArtistDto} from './dto/create-artist.dto';
+import {UpdateArtistDto} from './dto/update-artist.dto';
+import {ArtistsRepository} from "./artists.repository";
+import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 
 @Injectable()
 export class ArtistsService {
-  create(createArtistDto: CreateArtistDto) {
-    return 'This action adds a new artist';
+  constructor(private artistsRepository: ArtistsRepository) {
   }
 
-  findAll() {
-    return `This action returns all artists`;
+  async create(createArtistDto: CreateArtistDto) {
+    return await this.artistsRepository.create(createArtistDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  async findAll() {
+    return await this.artistsRepository.findMany();
   }
 
-  update(id: number, updateArtistDto: UpdateArtistDto) {
-    return `This action updates a #${id} artist`;
+  async findOne(id: string) {
+    const artist = await this.artistsRepository.findOne({
+      key: 'id',
+      equals: id
+    });
+
+    if (!artist) {
+      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+    }
+
+    return artist;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} artist`;
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = await this.artistsRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!artist) {
+      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+    }
+
+    return await this.artistsRepository.update(id, updateArtistDto);
+  }
+
+  async remove(id: string) {
+    const artist = await this.artistsRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!artist) {
+      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+    }
+
+    return await this.artistsRepository.delete(id);
   }
 }
