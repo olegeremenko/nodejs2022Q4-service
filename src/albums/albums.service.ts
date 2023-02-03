@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import EntityNotFoundException from "../exceptions/entity.not.found.exception";
-import {AlbumRepository} from "./album.repository";
+import {AlbumsRepository} from "./albums.repository";
 
 @Injectable()
 export class AlbumsService {
-  constructor(private albumsRepository: AlbumRepository) {
+  constructor(private albumsRepository: AlbumsRepository) {
   }
 
   async create(createAlbumDto: CreateAlbumDto) {

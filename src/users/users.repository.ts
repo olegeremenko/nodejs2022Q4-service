@@ -24,4 +24,24 @@ export class UsersRepository extends Repository<
 
     return created;
   }
+
+  async update(id: string, dto: UpdateUserDto) {
+    const idx = this.entities.findIndex((entity) => entity.id === id);
+    if (idx === -1) {
+      throw new Error('update');
+    }
+    const user = await this.findOne({
+      key: 'id',
+      equals: id
+    });
+    const updateUser: Omit<User, 'id' | 'login' | 'createdAt'> = {
+      ...dto,
+      updatedAt: Date.now(),
+      version: user.version + 1
+    };
+
+    const changed = { ...this.entities[idx], updateUser };
+    this.entities.splice(idx, 1, changed);
+    return changed;
+  }
 }

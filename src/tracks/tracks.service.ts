@@ -1,26 +1,58 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import EntityNotFoundException from "../exceptions/entity.not.found.exception";
+import {TracksRepository} from "./tracks.repository";
 
 @Injectable()
 export class TracksService {
-  create(createTrackDto: CreateTrackDto) {
-    return 'This action adds a new track';
+  constructor(private tracksRepository: TracksRepository) {
   }
 
-  findAll() {
-    return `This action returns all tracks`;
+  async create(createTrackDto: CreateTrackDto) {
+    return await this.tracksRepository.create(createTrackDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} track`;
+  async findAll() {
+    return await this.tracksRepository.findMany();
   }
 
-  update(id: number, updateTrackDto: UpdateTrackDto) {
-    return `This action updates a #${id} track`;
+  async findOne(id: string) {
+    const track = await this.tracksRepository.findOne({
+      key: 'id',
+      equals: id
+    });
+
+    if (!track) {
+      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+    }
+
+    return track;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} track`;
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    const track = await this.tracksRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!track) {
+      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+    }
+
+    return await this.tracksRepository.update(id, updateTrackDto);
+  }
+
+  async remove(id: string) {
+    const track = await this.tracksRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!track) {
+      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+    }
+
+    return await this.tracksRepository.delete(id);
   }
 }

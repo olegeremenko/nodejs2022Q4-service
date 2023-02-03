@@ -60,9 +60,7 @@ export class UsersService {
     }
 
     return await this.usersRepository.update(id, {
-      password: changePasswordDto.newPassword,
-      version: user.version + 1,
-      updatedAt: Date.now()
+      password: changePasswordDto.newPassword
     });
   }
 

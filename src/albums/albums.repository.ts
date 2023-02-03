@@ -6,7 +6,7 @@ import {UpdateAlbumDto} from "./dto/update-album.dto";
 import {CreateAlbumDto} from "./dto/create-album.dto";
 
 @Injectable()
-export class AlbumRepository extends Repository<
+export class AlbumsRepository extends Repository<
   Album,
   UpdateAlbumDto,
   CreateAlbumDto
