@@ -1,26 +1,79 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersRepository } from "./users.repository";
+import EntityNotFoundException from "../exceptions/entity.not.found.exception";
+import InvalidPasswordException from "../exceptions/invalid.password.exception";
+import {ChangePasswordDto} from "./dto/change-password.dto";
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(private usersRepository: UsersRepository) {
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async create(createUserDto: CreateUserDto) {
+    return await this.usersRepository.create(createUserDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findAll() {
+    return await this.usersRepository.findMany();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOne(id: string) {
+    const user = await this.usersRepository.findOne({
+      key: 'id',
+      equals: id
+    });
+
+    if (!user) {
+      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+    }
+
+    return user;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto) {
+    const user = await this.usersRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!user) {
+      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+    }
+
+    return 'No action for update for now';
+  }
+
+  async changePassword(id: string, changePasswordDto: ChangePasswordDto) {
+    const user = await this.usersRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!user) {
+      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+    }
+
+    if (user.password !== changePasswordDto.oldPassword) {
+      throw new InvalidPasswordException();
+    }
+
+    return await this.usersRepository.update(id, {
+      password: changePasswordDto.newPassword
+    });
+  }
+
+  async remove(id: string) {
+    const user = await this.usersRepository.findOne({
+      key: 'id',
+      equals: id
+    })
+
+    if (!user) {
+      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+    }
+
+    return await this.usersRepository.delete(id);
   }
 }
