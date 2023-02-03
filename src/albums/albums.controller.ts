@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  Put,
+  HttpCode
+} from '@nestjs/common';
 import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
@@ -8,27 +19,44 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    try {
+      return await this.albumsService.create(createAlbumDto);
+    } catch (exception) {
+      throw new HttpException(exception.message, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.albumsService.findAll();
+  async findAll() {
+    return await this.albumsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.albumsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return await this.albumsService.findOne(id);
+    } catch (exception) {
+      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumsService.update(+id, updateAlbumDto);
+  @Put(':id')
+  async update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
+    try {
+      return await this.albumsService.update(id, updateAlbumDto);
+    } catch (exception) {
+      throw new HttpException(exception.message, HttpStatus.FORBIDDEN);
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumsService.remove(+id);
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.albumsService.remove(id);
+    } catch (exception) {
+      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+    }
   }
 }
