@@ -11,11 +11,12 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  UnprocessableEntityException
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import {TracksService} from './tracks.service';
-import {CreateTrackDto} from './dto/create-track.dto';
-import {UpdateTrackDto} from './dto/update-track.dto';
+import { TracksService } from './tracks.service';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
+import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 
 @Controller('track')
 export class TracksController {
@@ -45,10 +46,16 @@ export class TracksController {
   }
 
   @Put(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTrackDto: UpdateTrackDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
     try {
       return await this.tracksService.update(id, updateTrackDto);
     } catch (exception) {
+      if (exception instanceof EntityNotFoundException) {
+        throw new NotFoundException(exception.message);
+      }
       throw new ForbiddenException(exception.message);
     }
   }
@@ -57,7 +64,7 @@ export class TracksController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      return await this.tracksService.remove(id);
+      await this.tracksService.remove(id);
     } catch (exception) {
       throw new NotFoundException(exception.message);
     }

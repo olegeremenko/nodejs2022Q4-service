@@ -1,9 +1,9 @@
-import Repository from "../db/repository";
-import {Injectable} from "@nestjs/common";
+import Repository from '../db/repository';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import {Album} from "./entities/album.entity";
-import {UpdateAlbumDto} from "./dto/update-album.dto";
-import {CreateAlbumDto} from "./dto/create-album.dto";
+import { Album } from './entities/album.entity';
+import { UpdateAlbumDto } from './dto/update-album.dto';
+import { CreateAlbumDto } from './dto/create-album.dto';
 
 @Injectable()
 export class AlbumsRepository extends Repository<

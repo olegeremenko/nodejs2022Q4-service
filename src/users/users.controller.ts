@@ -10,11 +10,12 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  Put
+  Put,
 } from '@nestjs/common';
-import {UsersService} from './users.service';
-import {CreateUserDto} from './dto/create-user.dto';
-import {ChangePasswordDto} from "./dto/change-password.dto";
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 
 @Controller('user')
 export class UsersController {
@@ -40,10 +41,16 @@ export class UsersController {
   }
 
   @Put(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() changePasswordDto: ChangePasswordDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
     try {
       return await this.usersService.changePassword(id, changePasswordDto);
     } catch (exception) {
+      if (exception instanceof EntityNotFoundException) {
+        throw new NotFoundException(exception.message);
+      }
       throw new ForbiddenException(exception.message);
     }
   }

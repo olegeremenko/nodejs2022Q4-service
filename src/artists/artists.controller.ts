@@ -11,11 +11,12 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  UnprocessableEntityException
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import {ArtistsService} from './artists.service';
-import {CreateArtistDto} from './dto/create-artist.dto';
-import {UpdateArtistDto} from './dto/update-artist.dto';
+import { ArtistsService } from './artists.service';
+import { CreateArtistDto } from './dto/create-artist.dto';
+import { UpdateArtistDto } from './dto/update-artist.dto';
+import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 
 @Controller('artist')
 export class ArtistsController {
@@ -45,10 +46,16 @@ export class ArtistsController {
   }
 
   @Put(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateArtistDto: UpdateArtistDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
     try {
       return await this.artistsService.update(id, updateArtistDto);
     } catch (exception) {
+      if (exception instanceof EntityNotFoundException) {
+        throw new NotFoundException(exception.message);
+      }
       throw new ForbiddenException(exception.message);
     }
   }
@@ -57,7 +64,7 @@ export class ArtistsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
-      return await this.artistsService.remove(id);
+      await this.artistsService.remove(id);
     } catch (exception) {
       throw new NotFoundException(exception.message);
     }

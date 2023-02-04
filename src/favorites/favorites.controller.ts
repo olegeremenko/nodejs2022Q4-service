@@ -8,10 +8,10 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UnprocessableEntityException
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import {FavoritesService} from './favorites.service';
-import EntityNotFoundException from "../exceptions/entity.not.found.exception";
+import { FavoritesService } from './favorites.service';
+import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 
 @Controller('favs')
 export class FavoritesController {

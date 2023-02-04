@@ -11,11 +11,12 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
-  UnprocessableEntityException
+  UnprocessableEntityException,
 } from '@nestjs/common';
-import {AlbumsService} from './albums.service';
-import {CreateAlbumDto} from './dto/create-album.dto';
-import {UpdateAlbumDto} from './dto/update-album.dto';
+import { AlbumsService } from './albums.service';
+import { CreateAlbumDto } from './dto/create-album.dto';
+import { UpdateAlbumDto } from './dto/update-album.dto';
+import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 
 @Controller('album')
 export class AlbumsController {
@@ -45,10 +46,16 @@ export class AlbumsController {
   }
 
   @Put(':id')
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
     try {
       return await this.albumsService.update(id, updateAlbumDto);
     } catch (exception) {
+      if (exception instanceof EntityNotFoundException) {
+        throw new NotFoundException(exception.message);
+      }
       throw new ForbiddenException(exception.message);
     }
   }

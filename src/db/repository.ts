@@ -15,7 +15,7 @@ type OptionsEqualsAnyOf<T, K extends keyof T> = Required<
 export default abstract class Repository<
   Entity extends { id: string },
   UpdateDTO,
-  CreateDTO
+  CreateDTO,
 > {
   protected entities: Entity[] = [];
 
@@ -23,7 +23,7 @@ export default abstract class Repository<
 
   private runChecks<T extends Entity, K extends keyof T>(
     entity: T,
-    options: Options<T, K>
+    options: Options<T, K>,
   ) {
     if (options.equals) {
       return lodash.isEqual(entity[options.key], options.equals);
@@ -31,7 +31,7 @@ export default abstract class Repository<
 
     if (options.equalsAnyOf) {
       return options.equalsAnyOf.some((inputValue) =>
-        lodash.isEqual(entity[options.key], inputValue)
+        lodash.isEqual(entity[options.key], inputValue),
       );
     }
 
@@ -39,15 +39,15 @@ export default abstract class Repository<
   }
 
   async findOne<K extends keyof Entity>(
-    option: OptionsEquals<Entity, K>
+    option: OptionsEquals<Entity, K>,
   ): Promise<Entity | null>;
 
   async findOne<K extends keyof Entity>(
-    option: OptionsEqualsAnyOf<Entity, K>
+    option: OptionsEqualsAnyOf<Entity, K>,
   ): Promise<Entity | null>;
 
   async findOne<K extends keyof Entity>(
-    options: Options<Entity, K>
+    options: Options<Entity, K>,
   ): Promise<Entity | null> {
     return (
       this.entities.find((entity) => this.runChecks(entity, options)) ?? null
@@ -55,16 +55,16 @@ export default abstract class Repository<
   }
 
   async findMany<K extends keyof Entity>(
-    options: OptionsEquals<Entity, K>
+    options: OptionsEquals<Entity, K>,
   ): Promise<Entity[]>;
   async findMany<K extends keyof Entity>(
-    option: OptionsEqualsAnyOf<Entity, K>
+    option: OptionsEqualsAnyOf<Entity, K>,
   ): Promise<Entity[]>;
 
   async findMany<K extends keyof Entity>(): Promise<Entity[]>;
 
   async findMany<K extends keyof Entity>(
-    options?: Options<Entity, K>
+    options?: Options<Entity, K>,
   ): Promise<Entity[]> {
     if (!options) {
       return this.entities;

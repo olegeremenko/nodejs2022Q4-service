@@ -1,9 +1,9 @@
-import Repository from "../db/repository";
-import {Injectable} from "@nestjs/common";
+import Repository from '../db/repository';
+import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
-import {Track} from "./entities/track.entity";
-import {CreateTrackDto} from "./dto/create-track.dto";
-import {UpdateTrackDto} from "./dto/update-track.dto";
+import { Track } from './entities/track.entity';
+import { CreateTrackDto } from './dto/create-track.dto';
+import { UpdateTrackDto } from './dto/update-track.dto';
 
 @Injectable()
 export class TracksRepository extends Repository<
