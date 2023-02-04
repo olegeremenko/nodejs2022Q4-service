@@ -6,18 +6,29 @@ import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 import InvalidPasswordException from "../exceptions/invalid.password.exception";
 import {ChangePasswordDto} from "./dto/change-password.dto";
 import {EntityTitles} from "../favorites/entities/favorite.entity";
+import {User} from "./entities/user.entity";
 
 @Injectable()
 export class UsersService {
   constructor(private usersRepository: UsersRepository) {
   }
 
+  private filterPassword(user: User): Omit<User, 'password'> {
+    const {password, ...userWithoutPassword} = user;
+
+    return userWithoutPassword;
+  }
+
   async create(createUserDto: CreateUserDto) {
-    return await this.usersRepository.create(createUserDto);
+    const newUser = await this.usersRepository.create(createUserDto);
+
+    return this.filterPassword(newUser);
   }
 
   async findAll() {
-    return await this.usersRepository.findMany();
+    const users = await this.usersRepository.findMany();
+
+    return users.map(user => this.filterPassword(user));
   }
 
   async findOne(id: string) {
@@ -30,7 +41,7 @@ export class UsersService {
       throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
-    return user;
+    return this.filterPassword(user);
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
@@ -60,9 +71,11 @@ export class UsersService {
       throw new InvalidPasswordException();
     }
 
-    return await this.usersRepository.update(id, {
+    const updatedUser = await this.usersRepository.update(id, {
       password: changePasswordDto.newPassword
     });
+
+    return this.filterPassword(updatedUser);
   }
 
   async remove(id: string) {
@@ -75,6 +88,6 @@ export class UsersService {
       throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
-    return await this.usersRepository.delete(id);
+    await this.usersRepository.delete(id);
   }
 }
