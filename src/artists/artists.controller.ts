@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put
+} from '@nestjs/common';
 import {ArtistsService} from './artists.service';
 import {CreateArtistDto} from './dto/create-artist.dto';
 import {UpdateArtistDto} from './dto/update-artist.dto';
@@ -22,7 +34,7 @@ export class ArtistsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.artistsService.findOne(id);
     } catch (exception) {
@@ -31,7 +43,7 @@ export class ArtistsController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateArtistDto: UpdateArtistDto) {
     try {
       return await this.artistsService.update(id, updateArtistDto);
     } catch (exception) {
@@ -41,7 +53,7 @@ export class ArtistsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.artistsService.remove(id);
     } catch (exception) {

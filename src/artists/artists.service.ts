@@ -3,6 +3,7 @@ import {CreateArtistDto} from './dto/create-artist.dto';
 import {UpdateArtistDto} from './dto/update-artist.dto';
 import {ArtistsRepository} from "./artists.repository";
 import EntityNotFoundException from "../exceptions/entity.not.found.exception";
+import {EntityTitles} from "../favorites/entities/favorite.entity";
 
 @Injectable()
 export class ArtistsService {
@@ -24,7 +25,7 @@ export class ArtistsService {
     });
 
     if (!artist) {
-      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ARTIST, id);
     }
 
     return artist;
@@ -37,7 +38,7 @@ export class ArtistsService {
     })
 
     if (!artist) {
-      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ARTIST, id);
     }
 
     return await this.artistsRepository.update(id, updateArtistDto);
@@ -50,7 +51,7 @@ export class ArtistsService {
     })
 
     if (!artist) {
-      throw new EntityNotFoundException(`Artist with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ARTIST, id);
     }
 
     return await this.artistsRepository.delete(id);

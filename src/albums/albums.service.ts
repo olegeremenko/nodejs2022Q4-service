@@ -3,6 +3,7 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 import {AlbumsRepository} from "./albums.repository";
+import {EntityTitles} from "../favorites/entities/favorite.entity";
 
 @Injectable()
 export class AlbumsService {
@@ -24,7 +25,7 @@ export class AlbumsService {
     });
 
     if (!album) {
-      throw new EntityNotFoundException(`Album with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ALBUM, id);
     }
 
     return album;
@@ -37,7 +38,7 @@ export class AlbumsService {
     })
 
     if (!album) {
-      throw new EntityNotFoundException(`Album with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ALBUM, id);
     }
 
     return await this.albumsRepository.update(id, updateAlbumDto);
@@ -50,7 +51,7 @@ export class AlbumsService {
     })
 
     if (!album) {
-      throw new EntityNotFoundException(`Album with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.ALBUM, id);
     }
 
     return await this.albumsRepository.delete(id);

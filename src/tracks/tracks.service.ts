@@ -3,6 +3,7 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 import {TracksRepository} from "./tracks.repository";
+import {EntityTitles} from "../favorites/entities/favorite.entity";
 
 @Injectable()
 export class TracksService {
@@ -24,7 +25,7 @@ export class TracksService {
     });
 
     if (!track) {
-      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
     return track;
@@ -37,7 +38,7 @@ export class TracksService {
     })
 
     if (!track) {
-      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
     return await this.tracksRepository.update(id, updateTrackDto);
@@ -50,7 +51,7 @@ export class TracksService {
     })
 
     if (!track) {
-      throw new EntityNotFoundException(`Track with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
     return await this.tracksRepository.delete(id);

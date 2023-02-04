@@ -5,6 +5,7 @@ import { UsersRepository } from "./users.repository";
 import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 import InvalidPasswordException from "../exceptions/invalid.password.exception";
 import {ChangePasswordDto} from "./dto/change-password.dto";
+import {EntityTitles} from "../favorites/entities/favorite.entity";
 
 @Injectable()
 export class UsersService {
@@ -26,7 +27,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
     return user;
@@ -39,7 +40,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
     return 'No action for update for now';
@@ -52,7 +53,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
     if (user.password !== changePasswordDto.oldPassword) {
@@ -71,7 +72,7 @@ export class UsersService {
     })
 
     if (!user) {
-      throw new EntityNotFoundException(`User with ID [${id}] not found`);
+      throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
     return await this.usersRepository.delete(id);

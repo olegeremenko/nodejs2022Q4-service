@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Post, Put} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put
+} from '@nestjs/common';
 import {TracksService} from './tracks.service';
 import {CreateTrackDto} from './dto/create-track.dto';
 import {UpdateTrackDto} from './dto/update-track.dto';
@@ -22,7 +34,7 @@ export class TracksController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.tracksService.findOne(id);
     } catch (exception) {
@@ -31,7 +43,7 @@ export class TracksController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
+  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTrackDto: UpdateTrackDto) {
     try {
       return await this.tracksService.update(id, updateTrackDto);
     } catch (exception) {
@@ -41,7 +53,7 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id') id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.tracksService.remove(id);
     } catch (exception) {
