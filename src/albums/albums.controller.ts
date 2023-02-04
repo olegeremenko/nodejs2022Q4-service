@@ -1,18 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  HttpException,
+  ForbiddenException,
+  Get,
+  HttpCode,
   HttpStatus,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
   Put,
-  HttpCode, ParseUUIDPipe
+  UnprocessableEntityException
 } from '@nestjs/common';
-import { AlbumsService } from './albums.service';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import {AlbumsService} from './albums.service';
+import {CreateAlbumDto} from './dto/create-album.dto';
+import {UpdateAlbumDto} from './dto/update-album.dto';
 
 @Controller('albums')
 export class AlbumsController {
@@ -23,7 +26,7 @@ export class AlbumsController {
     try {
       return await this.albumsService.create(createAlbumDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new UnprocessableEntityException(exception.message);
     }
   }
 
@@ -37,7 +40,7 @@ export class AlbumsController {
     try {
       return await this.albumsService.findOne(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -46,7 +49,7 @@ export class AlbumsController {
     try {
       return await this.albumsService.update(id, updateAlbumDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException(exception.message);
     }
   }
 
@@ -56,7 +59,7 @@ export class AlbumsController {
     try {
       return await this.albumsService.remove(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 }

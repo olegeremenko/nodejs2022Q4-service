@@ -1,20 +1,21 @@
-import {Controller, Get, Post, Param, Delete, HttpException, HttpStatus, HttpCode, ParseUUIDPipe} from '@nestjs/common';
-import { FavoritesService } from './favorites.service';
-import AlreadyInFavoritesException from "../exceptions/already-in-favorites.exception";
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  UnprocessableEntityException
+} from '@nestjs/common';
+import {FavoritesService} from './favorites.service';
+import EntityNotFoundException from "../exceptions/entity.not.found.exception";
 
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
-
-  private processException(exception) {
-    let httpStatus = HttpStatus.NOT_FOUND;
-
-    if (exception instanceof AlreadyInFavoritesException) {
-      httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-    }
-
-    throw new HttpException(exception.message, httpStatus);
-  }
 
   @Get()
   async findAll() {
@@ -27,7 +28,9 @@ export class FavoritesController {
     try {
       await this.favoritesService.addTrack(id);
     } catch (exception) {
-      this.processException(exception);
+      if (exception instanceof EntityNotFoundException) {
+        throw new UnprocessableEntityException(exception.message);
+      }
     }
   }
 
@@ -37,7 +40,7 @@ export class FavoritesController {
     try {
       return await this.favoritesService.removeTrack(id);
     } catch (exception) {
-      this.processException(exception);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -47,7 +50,9 @@ export class FavoritesController {
     try {
       await this.favoritesService.addAlbum(id);
     } catch (exception) {
-      this.processException(exception);
+      if (exception instanceof EntityNotFoundException) {
+        throw new UnprocessableEntityException(exception.message);
+      }
     }
   }
 
@@ -57,7 +62,7 @@ export class FavoritesController {
     try {
       return await this.favoritesService.removeAlbum(id);
     } catch (exception) {
-      this.processException(exception);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -67,7 +72,9 @@ export class FavoritesController {
     try {
       await this.favoritesService.addArtist(id);
     } catch (exception) {
-      this.processException(exception);
+      if (exception instanceof EntityNotFoundException) {
+        throw new UnprocessableEntityException(exception.message);
+      }
     }
   }
 
@@ -77,7 +84,7 @@ export class FavoritesController {
     try {
       return await this.favoritesService.removeArtist(id);
     } catch (exception) {
-      this.processException(exception);
+      throw new NotFoundException(exception.message);
     }
   }
 }

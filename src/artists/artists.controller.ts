@@ -2,14 +2,16 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
-  Put
+  Put,
+  UnprocessableEntityException
 } from '@nestjs/common';
 import {ArtistsService} from './artists.service';
 import {CreateArtistDto} from './dto/create-artist.dto';
@@ -24,7 +26,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.create(createArtistDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new UnprocessableEntityException(exception.message);
     }
   }
 
@@ -38,7 +40,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.findOne(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -47,7 +49,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.update(id, updateArtistDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException(exception.message);
     }
   }
 
@@ -57,7 +59,7 @@ export class ArtistsController {
     try {
       return await this.artistsService.remove(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 }

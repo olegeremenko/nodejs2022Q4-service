@@ -2,14 +2,16 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
-  HttpException,
   HttpStatus,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
-  Put
+  Put,
+  UnprocessableEntityException
 } from '@nestjs/common';
 import {TracksService} from './tracks.service';
 import {CreateTrackDto} from './dto/create-track.dto';
@@ -24,7 +26,7 @@ export class TracksController {
     try {
       return await this.tracksService.create(createTrackDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new UnprocessableEntityException(exception.message);
     }
   }
 
@@ -38,7 +40,7 @@ export class TracksController {
     try {
       return await this.tracksService.findOne(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -47,7 +49,7 @@ export class TracksController {
     try {
       return await this.tracksService.update(id, updateTrackDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException(exception.message);
     }
   }
 
@@ -57,7 +59,7 @@ export class TracksController {
     try {
       return await this.tracksService.remove(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 }

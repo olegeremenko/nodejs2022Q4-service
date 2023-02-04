@@ -1,19 +1,20 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  ParseUUIDPipe,
-  HttpException,
+  ForbiddenException,
+  Get,
+  HttpCode,
   HttpStatus,
-  Put,
-  HttpCode
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Put
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ChangePasswordDto } from "./dto/change-password.dto";
+import {UsersService} from './users.service';
+import {CreateUserDto} from './dto/create-user.dto';
+import {ChangePasswordDto} from "./dto/change-password.dto";
 
 @Controller('users')
 export class UsersController {
@@ -34,7 +35,7 @@ export class UsersController {
     try {
       return await this.usersService.findOne(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 
@@ -43,7 +44,7 @@ export class UsersController {
     try {
       return await this.usersService.changePassword(id, changePasswordDto);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.FORBIDDEN);
+      throw new ForbiddenException(exception.message);
     }
   }
 
@@ -53,7 +54,7 @@ export class UsersController {
     try {
       await this.usersService.remove(id);
     } catch (exception) {
-      throw new HttpException(exception.message, HttpStatus.NOT_FOUND);
+      throw new NotFoundException(exception.message);
     }
   }
 }
