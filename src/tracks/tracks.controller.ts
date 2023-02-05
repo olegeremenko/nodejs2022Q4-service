@@ -17,7 +17,12 @@ import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
-import {ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiTags} from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Track')
 @Controller('track')

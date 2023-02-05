@@ -18,11 +18,12 @@ import { ChangePasswordDto } from './dto/change-password.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 import {
   ApiBadRequestResponse,
-  ApiCreatedResponse, ApiForbiddenResponse,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
-  ApiTags
-} from "@nestjs/swagger";
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('User')
 @Controller('user')
@@ -31,7 +32,9 @@ export class UsersController {
 
   @Post()
   @ApiCreatedResponse({ description: 'The user has been created' })
-  @ApiBadRequestResponse({ description: 'Body does not contain required fields' })
+  @ApiBadRequestResponse({
+    description: 'Body does not contain required fields',
+  })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }

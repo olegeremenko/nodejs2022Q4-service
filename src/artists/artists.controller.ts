@@ -17,7 +17,12 @@ import { ArtistsService } from './artists.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
-import {ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiTags} from "@nestjs/swagger";
+import {
+  ApiBadRequestResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Artist')
 @Controller('artist')
