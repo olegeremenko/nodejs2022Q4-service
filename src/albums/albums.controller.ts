@@ -17,7 +17,9 @@ import { AlbumsService } from './albums.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
+import {ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiTags} from "@nestjs/swagger";
 
+@ApiTags('Album')
 @Controller('album')
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
@@ -62,6 +64,9 @@ export class AlbumsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Deleted successfully' })
+  @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
+  @ApiNotFoundResponse({ description: 'Album not found' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.albumsService.remove(id);

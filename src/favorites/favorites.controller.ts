@@ -12,7 +12,9 @@ import {
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
+import {ApiTags} from "@nestjs/swagger";
 
+@ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}

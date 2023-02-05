@@ -16,12 +16,22 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse, ApiForbiddenResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiTags
+} from "@nestjs/swagger";
 
+@ApiTags('User')
 @Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @ApiCreatedResponse({ description: 'The user has been created' })
+  @ApiBadRequestResponse({ description: 'Body does not contain required fields' })
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
   }
@@ -32,6 +42,8 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
       return await this.usersService.findOne(id);
@@ -41,6 +53,9 @@ export class UsersController {
   }
 
   @Put(':id')
+  @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiForbiddenResponse({ description: 'oldPassword is wrong' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changePasswordDto: ChangePasswordDto,
@@ -57,6 +72,9 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Deleted successfully' })
+  @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
+  @ApiNotFoundResponse({ description: 'User not found' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       await this.usersService.remove(id);

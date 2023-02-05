@@ -17,7 +17,9 @@ import { TracksService } from './tracks.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
+import {ApiBadRequestResponse, ApiNoContentResponse, ApiNotFoundResponse, ApiTags} from "@nestjs/swagger";
 
+@ApiTags('Track')
 @Controller('track')
 export class TracksController {
   constructor(private readonly tracksService: TracksService) {}
@@ -62,6 +64,9 @@ export class TracksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: 'Deleted successfully' })
+  @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
+  @ApiNotFoundResponse({ description: 'Track not found' })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {
       await this.tracksService.remove(id);
