@@ -7,24 +7,34 @@
 
 ## Downloading
 
+```bash
+git clone https://github.com/olegeremenko/nodejs2022Q4-service
 ```
-git clone {repository URL}
+
+Checkout to develop branch
+
+```bash
+git checkout develop
 ```
 
 ## Installing NPM modules
 
-```
+```bash
 npm install
 ```
 
+## Server environment variables
+
+Copy `.env.example` to `.env` and update the PORT value if needed.
+
 ## Running application
 
-```
+```bash
 npm start
 ```
 
 After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
