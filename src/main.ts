@@ -18,6 +18,7 @@ async function bootstrap() {
   const port: number = +(process.env['PORT'] || 4000);
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  app.enableCors();
 
   const config = new DocumentBuilder()
     .setTitle('Home Library')
