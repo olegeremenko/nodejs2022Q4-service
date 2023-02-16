@@ -4,7 +4,7 @@ import { ArtistsRepository } from '../artists/artists.repository';
 import { TracksRepository } from '../tracks/tracks.repository';
 import { FavoritesService } from '../favorites/favorites.service';
 import { FavoritesRepository } from '../favorites/favorites.repository';
-import { UsersRepository } from '../users/users.repository';
+// import { UsersRepository } from '../users/users.repository';
 
 @Module({
   providers: [
@@ -13,7 +13,7 @@ import { UsersRepository } from '../users/users.repository';
     AlbumsRepository,
     ArtistsRepository,
     TracksRepository,
-    UsersRepository,
+    // UsersRepository,
   ],
   exports: [
     FavoritesService,
@@ -21,7 +21,7 @@ import { UsersRepository } from '../users/users.repository';
     AlbumsRepository,
     ArtistsRepository,
     TracksRepository,
-    UsersRepository,
+    // UsersRepository,
   ],
 })
 export class DbModule {}
