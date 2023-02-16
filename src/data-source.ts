@@ -1,6 +1,9 @@
 import * as dotenv from 'dotenv';
 import {DataSource} from "typeorm";
 import {User} from "./users/entities/user.entity";
+import {Artist} from "./artists/entities/artist.entity";
+import {Album} from "./albums/entities/album.entity";
+import {Track} from "./tracks/entities/track.entity";
 
 dotenv.config();
 
@@ -12,7 +15,7 @@ export const AppDataSource = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DATABASE,
   synchronize: true,
-  entities: [User],
+  entities: [User, Artist, Album, Track],
   migrations: [ './dist/**/migration/*.js' ],
   migrationsRun: true,
 });

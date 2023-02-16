@@ -1,7 +1,21 @@
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Artist} from "../../artists/entities/artist.entity";
+import {Album} from "../../albums/entities/album.entity";
+
+@Entity('tracks')
 export class Track {
+  @PrimaryGeneratedColumn('uuid')
   id: string; // uuid v4
+
+  @Column({ nullable: false })
   name: string;
-  artistId: string | null; // refers to Artist
-  albumId: string | null; // refers to Album
+
+  @ManyToOne(() => Artist, (artist) => artist.tracks, { onDelete: 'SET NULL' })
+  artist: Artist;
+
+  @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'SET NULL' })
+  album: Album;
+
+  @Column({ nullable: false })
   duration: number; // integer number
 }

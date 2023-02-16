@@ -2,15 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
-import { TracksRepository } from './tracks.repository';
 import { EntityTitles } from '../favorites/entities/favorite.entity';
-import { FavoritesRepository } from '../favorites/favorites.repository';
+import {InjectRepository} from "@nestjs/typeorm";
+import {Repository} from "typeorm";
+import {Track} from "./entities/track.entity";
 
 @Injectable()
 export class TracksService {
   constructor(
-    private favoritesRepository: FavoritesRepository,
-    private tracksRepository: TracksRepository,
+    @InjectRepository(Track)
+    private tracksRepository: Repository<Track>,
   ) {}
 
   async create(createTrackDto: CreateTrackDto) {
@@ -18,14 +19,11 @@ export class TracksService {
   }
 
   async findAll() {
-    return await this.tracksRepository.findMany();
+    return await this.tracksRepository.find();
   }
 
   async findOne(id: string) {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
@@ -35,10 +33,7 @@ export class TracksService {
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
@@ -48,18 +43,12 @@ export class TracksService {
   }
 
   async remove(id: string): Promise<void> {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
     await this.tracksRepository.delete(id);
-    try {
-      await this.favoritesRepository.removeTrack(id);
-    } catch (e) {}
   }
 }
