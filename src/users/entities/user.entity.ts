@@ -1,5 +1,5 @@
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn} from "typeorm";
-import {Exclude} from "class-transformer";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
 @Entity('users')
 export class User {
@@ -16,14 +16,9 @@ export class User {
   @Column({ nullable: false, default: 1 })
   version: number; // integer number, increments on update
 
-  @CreateDateColumn()
+  @Column({ default: Math.floor(Date.now() / 1000) })
   createdAt: number; // timestamp of creation
 
-  @UpdateDateColumn()
+  @Column({ default: Math.floor(Date.now() / 1000) })
   updatedAt: number; // timestamp of last update
-
-  toResponse() {
-    const { id, login, version, createdAt, updatedAt } = this;
-    return { id, login, version, createdAt, updatedAt }
-  }
 }

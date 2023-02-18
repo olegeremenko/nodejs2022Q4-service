@@ -5,39 +5,40 @@ import InvalidPasswordException from '../exceptions/invalid.password.exception';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EntityTitles } from '../favorites/entities/favorite.entity';
 import { User } from './entities/user.entity';
-import {InjectRepository} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = await this.usersRepository.create(createUserDto);
 
-    return (await this.usersRepository.save(newUser)).toResponse();
+    return await this.usersRepository.save(newUser);
   }
 
-  async findAll() {
-    const users = await this.usersRepository.find();
-
-    return users.map((user) => user.toResponse());
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
       throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
-    return user.toResponse();
+    return user;
   }
 
-  async changePassword(id: string, changePasswordDto: ChangePasswordDto) {
+  async changePassword(
+    id: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
     const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
@@ -48,12 +49,13 @@ export class UsersService {
       throw new InvalidPasswordException();
     }
 
-    const updatedUser = await this.usersRepository.update(id, {
+    await this.usersRepository.update(id, {
+      updatedAt: Math.floor(Date.now() / 1000),
       password: changePasswordDto.newPassword,
-      version: user.version + 1
+      version: user.version + 1,
     });
 
-    return user.toResponse();
+    return await this.usersRepository.findOneBy({ id });
   }
 
   async remove(id: string): Promise<void> {

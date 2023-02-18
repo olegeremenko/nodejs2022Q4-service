@@ -1,17 +1,26 @@
 import { Artist } from '../../artists/entities/artist.entity';
 import { Album } from '../../albums/entities/album.entity';
 import { Track } from '../../tracks/entities/track.entity';
+import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Exclude } from 'class-transformer';
 
+@Entity('favorites')
 export class Favorite {
-  artists: string[]; // favorite artists ids
-  albums: string[]; // favorite albums ids
-  tracks: string[]; // favorite tracks ids
+  @PrimaryGeneratedColumn('uuid')
+  @Exclude()
+  id: string;
 
-  constructor() {
-    this.albums = [];
-    this.artists = [];
-    this.tracks = [];
-  }
+  @JoinTable()
+  @ManyToMany(() => Artist, { onDelete: 'CASCADE', eager: true })
+  artists: Artist[];
+
+  @JoinTable()
+  @ManyToMany(() => Album, { onDelete: 'CASCADE', eager: true })
+  albums: Album[];
+
+  @JoinTable()
+  @ManyToMany(() => Track, { onDelete: 'CASCADE', eager: true })
+  tracks: Track[];
 }
 
 export enum EntityTitles {

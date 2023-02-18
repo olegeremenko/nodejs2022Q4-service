@@ -1,4 +1,5 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,11 +10,13 @@ import {
   ParseUUIDPipe,
   Post,
   UnprocessableEntityException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 import { ApiTags } from '@nestjs/swagger';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('Favorites')
 @Controller('favs')
 export class FavoritesController {

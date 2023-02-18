@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   ForbiddenException,
@@ -11,6 +12,7 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,7 +26,9 @@ import {
   ApiNotFoundResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from './entities/user.entity';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @ApiTags('User')
 @Controller('user')
 export class UsersController {
@@ -40,14 +44,14 @@ export class UsersController {
   }
 
   @Get()
-  async findAll() {
+  async findAll(): Promise<User[]> {
     return await this.usersService.findAll();
   }
 
   @Get(':id')
   @ApiNotFoundResponse({ description: 'User not found' })
   @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     try {
       return await this.usersService.findOne(id);
     } catch (exception) {
@@ -62,7 +66,7 @@ export class UsersController {
   async update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() changePasswordDto: ChangePasswordDto,
-  ) {
+  ): Promise<User> {
     try {
       return await this.usersService.changePassword(id, changePasswordDto);
     } catch (exception) {
@@ -78,7 +82,7 @@ export class UsersController {
   @ApiNoContentResponse({ description: 'Deleted successfully' })
   @ApiBadRequestResponse({ description: 'ID is invalid (not uuid)' })
   @ApiNotFoundResponse({ description: 'User not found' })
-  async remove(@Param('id', ParseUUIDPipe) id: string) {
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     try {
       await this.usersService.remove(id);
     } catch (exception) {

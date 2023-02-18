@@ -27,6 +27,6 @@ services:
       postgres-db:
         condition: service_started
     ports:
-      - ${PORT}:4000
+      - 4000:4000
     networks:
       nodejs-basics:
