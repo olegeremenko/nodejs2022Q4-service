@@ -33,11 +33,11 @@ export class FavoritesService {
   }
 
   async findAll(): Promise<Favorite> {
-    let favorites = this.getFavorites();
+    let favorites = await this.getFavorites();
 
     if (!favorites) {
       await this.favoritesRepository.save(new Favorite());
-      favorites = this.getFavorites();
+      favorites = await this.getFavorites();
     }
 
     return favorites;
