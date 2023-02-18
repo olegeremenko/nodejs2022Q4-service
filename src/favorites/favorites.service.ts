@@ -37,6 +37,7 @@ export class FavoritesService {
 
     if (!favorites) {
       await this.favoritesRepository.save(new Favorite());
+
       favorites = await this.getFavorites();
     }
 

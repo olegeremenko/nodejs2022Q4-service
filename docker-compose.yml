@@ -10,6 +10,7 @@ services:
     build: ./db
     restart: always
     container_name: postgres-db
+    image: olegerymenko/postgres-db:latest
     volumes:
       - ./db/data:/var/lib/postgresql/data
     environment:
@@ -24,10 +25,13 @@ services:
   nodejs-server:
     build: .
     restart: on-failure
-    container_name: nodejs-server
+    container_name: nest-server
+    image: olegerymenko/nest-server:latest
     depends_on:
       postgres-db:
         condition: service_started
+    volumes:
+      - ./src:/usr/app/src
     ports:
       - ${PORT}:${PORT}
     networks:

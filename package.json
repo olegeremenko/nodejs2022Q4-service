@@ -19,8 +19,8 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "typeorm:generate": "npx typeorm-ts-node-esm migration:generate ./src/migration/start -d ./src/data-source.ts",
-    "typeorm:create": "npx typeorm-ts-node-esm migration:create ./src/migration/post",
+    "typeorm:generate": "npx typeorm-ts-node-esm migration:generate ./src/migrations/start -d ./src/data-source.ts",
+    "typeorm:create": "npx typeorm-ts-node-esm migration:create ./src/migrations/post",
     "typeorm:migrate": "npx typeorm-ts-node-esm migration:run -d ./src/data-source.ts"
   },
   "dependencies": {
