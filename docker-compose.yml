@@ -23,10 +23,10 @@ services:
       nodejs-basics:
 
   nodejs-server:
-    build: .
+#    build: .
     restart: on-failure
     container_name: nest-server
-    image: nest-server:latest
+    image: olegeryomenko/nest-server:latest
     depends_on:
       postgres-db:
         condition: service_started

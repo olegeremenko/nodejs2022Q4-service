@@ -21,7 +21,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "typeorm:generate": "npx typeorm-ts-node-esm migration:generate ./src/migrations/start -d ./src/data-source.ts",
     "typeorm:create": "npx typeorm-ts-node-esm migration:create ./src/migrations/post",
-    "typeorm:migrate": "npx typeorm-ts-node-esm migration:run -d ./src/data-source.ts"
+    "typeorm:migrate": "npx typeorm-ts-node-esm migration:run -d ./src/data-source.ts",
+    "scan": "docker scan --accept-license olegeryomenko/nest-server:latest"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

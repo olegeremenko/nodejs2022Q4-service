@@ -11,7 +11,7 @@
 git clone https://github.com/olegeremenko/nodejs2022Q4-service
 ```
 
-Checkout to develop branch
+Checkout to `container` branch
 
 ```bash
 git checkout container
@@ -19,7 +19,9 @@ git checkout container
 
 ## Server environment variables
 
-Copy `.env.example` to `.env` and update the PORT value if needed, update Postgres parameters.
+Copy `.env.example` to `.env` and update the PORT value if needed.
+
+Update Postgres parameters if needed.
 
 ## Running application
 
@@ -57,6 +59,20 @@ To run only specific test suite with authorization
 
 ```
 npm run test:auth -- <path to suite>
+```
+
+### Scan docker container for vulnerabilities
+
+You must login to Docker hub first:
+
+```bash
+docker login
+```
+
+To scan nest-server container run:
+
+```bash
+npm run scan
 ```
 
 ### Auto-fix and format
