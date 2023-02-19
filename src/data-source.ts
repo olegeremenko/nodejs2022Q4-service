@@ -17,6 +17,6 @@ export const AppDataSource = new DataSource({
   database: process.env.POSTGRES_DB,
   // synchronize: true,
   entities: [User, Artist, Album, Track, Favorite],
-  migrations: ['./**/migrations/*.js'],
+  migrations: ['./dist/migrations/*.js'],
   migrationsRun: true,
 });
