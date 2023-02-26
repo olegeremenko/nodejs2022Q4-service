@@ -1,52 +1,45 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UsersRepository } from './users.repository';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 import InvalidPasswordException from '../exceptions/invalid.password.exception';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EntityTitles } from '../favorites/entities/favorite.entity';
 import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-  private filterPassword(user: User): Omit<User, 'password'> {
-    const { password, ...userWithoutPassword } = user;
-
-    return userWithoutPassword;
-  }
-
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = await this.usersRepository.create(createUserDto);
 
-    return this.filterPassword(newUser);
+    return await this.usersRepository.save(newUser);
   }
 
-  async findAll() {
-    const users = await this.usersRepository.findMany();
-
-    return users.map((user) => this.filterPassword(user));
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.find();
   }
 
-  async findOne(id: string) {
-    const user = await this.usersRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async findOne(id: string): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
       throw new EntityNotFoundException(EntityTitles.USER, id);
     }
 
-    return this.filterPassword(user);
+    return user;
   }
 
-  async changePassword(id: string, changePasswordDto: ChangePasswordDto) {
-    const user = await this.usersRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async changePassword(
+    id: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
       throw new EntityNotFoundException(EntityTitles.USER, id);
@@ -56,18 +49,17 @@ export class UsersService {
       throw new InvalidPasswordException();
     }
 
-    const updatedUser = await this.usersRepository.update(id, {
+    await this.usersRepository.update(id, {
+      updatedAt: Math.floor(Date.now() / 1000),
       password: changePasswordDto.newPassword,
+      version: user.version + 1,
     });
 
-    return this.filterPassword(updatedUser);
+    return await this.usersRepository.findOneBy({ id });
   }
 
-  async remove(id: string) {
-    const user = await this.usersRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async remove(id: string): Promise<void> {
+    const user = await this.usersRepository.findOneBy({ id });
 
     if (!user) {
       throw new EntityNotFoundException(EntityTitles.USER, id);

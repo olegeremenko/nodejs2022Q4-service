@@ -2,30 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
-import { TracksRepository } from './tracks.repository';
 import { EntityTitles } from '../favorites/entities/favorite.entity';
-import { FavoritesRepository } from '../favorites/favorites.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TracksService {
   constructor(
-    private favoritesRepository: FavoritesRepository,
-    private tracksRepository: TracksRepository,
+    @InjectRepository(Track)
+    private tracksRepository: Repository<Track>,
   ) {}
 
-  async create(createTrackDto: CreateTrackDto) {
-    return await this.tracksRepository.create(createTrackDto);
+  async create(createTrackDto: CreateTrackDto): Promise<Track> {
+    const track = await this.tracksRepository.create(createTrackDto);
+
+    return await this.tracksRepository.save(track);
   }
 
-  async findAll() {
-    return await this.tracksRepository.findMany();
+  async findAll(): Promise<Track[]> {
+    return await this.tracksRepository.find();
   }
 
-  async findOne(id: string) {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async findOne(id: string): Promise<Track> {
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
@@ -34,32 +34,25 @@ export class TracksService {
     return track;
   }
 
-  async update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
-    return await this.tracksRepository.update(id, updateTrackDto);
+    await this.tracksRepository.update(id, updateTrackDto);
+
+    return await this.tracksRepository.findOneBy({ id });
   }
 
   async remove(id: string): Promise<void> {
-    const track = await this.tracksRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+    const track = await this.tracksRepository.findOneBy({ id });
 
     if (!track) {
       throw new EntityNotFoundException(EntityTitles.TRACK, id);
     }
 
     await this.tracksRepository.delete(id);
-    try {
-      await this.favoritesRepository.removeTrack(id);
-    } catch (e) {}
   }
 }

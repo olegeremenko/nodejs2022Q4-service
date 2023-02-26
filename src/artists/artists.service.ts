@@ -1,34 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
-import { ArtistsRepository } from './artists.repository';
 import EntityNotFoundException from '../exceptions/entity.not.found.exception';
 import { EntityTitles } from '../favorites/entities/favorite.entity';
-import { FavoritesRepository } from '../favorites/favorites.repository';
-import { TracksRepository } from '../tracks/tracks.repository';
-import { Track } from '../tracks/entities/track.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistsService {
   constructor(
-    private favoritesRepository: FavoritesRepository,
-    private artistsRepository: ArtistsRepository,
-    private tracksRepository: TracksRepository,
+    @InjectRepository(Artist)
+    private artistsRepository: Repository<Artist>,
   ) {}
 
-  async create(createArtistDto: CreateArtistDto) {
-    return await this.artistsRepository.create(createArtistDto);
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
+    const artist = await this.artistsRepository.create(createArtistDto);
+
+    return await this.artistsRepository.save(artist);
   }
 
-  async findAll() {
-    return await this.artistsRepository.findMany();
+  async findAll(): Promise<Artist[]> {
+    return await this.artistsRepository.find();
   }
 
-  async findOne(id: string) {
-    const artist = await this.artistsRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async findOne(id: string): Promise<Artist> {
+    const artist = await this.artistsRepository.findOneBy({ id });
 
     if (!artist) {
       throw new EntityNotFoundException(EntityTitles.ARTIST, id);
@@ -37,41 +34,24 @@ export class ArtistsService {
     return artist;
   }
 
-  async update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artist = await this.artistsRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+    const artist = await this.artistsRepository.findOneBy({ id });
 
     if (!artist) {
       throw new EntityNotFoundException(EntityTitles.ARTIST, id);
     }
 
-    return await this.artistsRepository.update(id, updateArtistDto);
+    await this.artistsRepository.update(id, updateArtistDto);
+
+    return await this.artistsRepository.findOneBy({ id });
   }
 
   async remove(id: string): Promise<void> {
-    const artist = await this.artistsRepository.findOne({
-      key: 'id',
-      equals: id,
-    });
+    const artist = await this.artistsRepository.findOneBy({ id });
 
     if (!artist) {
       throw new EntityNotFoundException(EntityTitles.ARTIST, id);
     }
-
-    try {
-      await this.favoritesRepository.removeArtist(id);
-    } catch (e) {}
-
-    const tracks = await this.tracksRepository.findMany({
-      key: 'artistId',
-      equals: id,
-    });
-    tracks.map(async (track: Track) => {
-      track.artistId = null;
-      await this.tracksRepository.update(track.id, track);
-    });
 
     await this.artistsRepository.delete(id);
   }

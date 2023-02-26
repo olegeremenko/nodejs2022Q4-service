@@ -11,13 +11,13 @@
 git clone https://github.com/olegeremenko/nodejs2022Q4-service
 ```
 
-Checkout to develop branch
+Checkout to `container` branch
 
 ```bash
-git checkout develop
+git checkout container
 ```
 
-## Installing NPM modules
+## Installing NPM modules (to run tests locally)
 
 ```bash
 npm install
@@ -27,14 +27,16 @@ npm install
 
 Copy `.env.example` to `.env` and update the PORT value if needed.
 
+Update Postgres parameters if needed.
+
 ## Running application
 
 ```bash
-npm start
+docker-compose up
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/api/.
+Postgres and NodeJS containers is up and running on ports specified in .env.
+You can open in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 ## Testing
@@ -63,6 +65,20 @@ To run only specific test suite with authorization
 
 ```
 npm run test:auth -- <path to suite>
+```
+
+### Scan docker container for vulnerabilities
+
+You must login to Docker hub first:
+
+```bash
+docker login
+```
+
+To scan nest-server container run:
+
+```bash
+npm run scan
 ```
 
 ### Auto-fix and format

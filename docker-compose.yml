@@ -1,0 +1,40 @@
+version: '3'
+
+networks:
+  nodejs-basics:
+    driver: bridge
+
+services:
+
+  postgres-db:
+    build: ./db
+    restart: always
+    container_name: postgres-db
+    image: postgres-db:latest
+    volumes:
+      - ./db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    networks:
+      nodejs-basics:
+
+  nodejs-server:
+#    build: .
+    restart: on-failure
+    container_name: nest-server
+    image: olegeryomenko/nest-server:latest
+    depends_on:
+      postgres-db:
+        condition: service_started
+    volumes:
+      - ./src:/usr/app/src
+      - ./logs:/usr/app/logs
+      - ./.env:/usr/app/.env
+    ports:
+      - ${PORT}:${PORT}
+    networks:
+      nodejs-basics:
