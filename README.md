@@ -17,6 +17,12 @@ Checkout to `container` branch
 git checkout container
 ```
 
+## Installing NPM modules (to run tests locally)
+
+```bash
+npm install
+```
+
 ## Server environment variables
 
 Copy `.env.example` to `.env` and update the PORT value if needed.
